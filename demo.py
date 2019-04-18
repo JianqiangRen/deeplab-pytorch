@@ -12,6 +12,7 @@ import cv2
 import matplotlib
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import pylab
 import numpy as np
 import torch
 import torch.nn as nn
@@ -21,6 +22,8 @@ from addict import Dict
 
 from libs.models import *
 from libs.utils import DenseCRF
+
+label2semantic = {}
 
 
 def get_device(cuda):
@@ -142,6 +145,15 @@ def single(config_path, model_path, image_path, cuda, crf):
     CONFIG = Dict(yaml.load(config_path))
     device = get_device(cuda)
     torch.set_grad_enabled(False)
+    
+    print(CONFIG.DATASET.LABELS)
+    
+    with open(CONFIG.DATASET.LABELS, 'r') as f:
+        for line in f:
+            labelsemantic = line.split()
+            # print(labelsemantic)
+            label2semantic[int(labelsemantic[0].strip())] = labelsemantic[1].strip()
+    
 
     classes = get_classtable(CONFIG)
     postprocessor = setup_postprocessor(CONFIG) if crf else None
@@ -158,27 +170,20 @@ def single(config_path, model_path, image_path, cuda, crf):
     image, raw_image = preprocessing(image, device, CONFIG)
     labelmap = inference(model, image, raw_image, postprocessor)
     labels = np.unique(labelmap)
+    cv2.imwrite("labelmap.png", labelmap)
+ 
+    cv2.imshow("Input image", raw_image[:, :, :])
+    cv2.waitKey(0)
 
-    # Show result for each class
-    rows = np.floor(np.sqrt(len(labels) + 1))
-    cols = np.ceil((len(labels) + 1) / rows)
-
-    plt.figure(figsize=(10, 10))
-    ax = plt.subplot(rows, cols, 1)
-    ax.set_title("Input image")
-    ax.imshow(raw_image[:, :, ::-1])
-    ax.axis("off")
 
     for i, label in enumerate(labels):
+        print("{}".format(i))
         mask = labelmap == label
-        ax = plt.subplot(rows, cols, i + 2)
-        ax.set_title(classes[label])
-        ax.imshow(raw_image[..., ::-1])
-        ax.imshow(mask.astype(np.float32), alpha=0.5)
-        ax.axis("off")
-
-    plt.tight_layout()
-    plt.show()
+        print("[{}]label:{}".format(i, label2semantic[label]))
+        cur_img = np.dstack((raw_image, 120* mask.astype(np.float32)))
+        cv2.putText(cur_img,label2semantic[label],(30,30),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,255,255),1)
+        cv2.imshow("{}".format(i), mask.astype(np.float32))
+        cv2.waitKey(0)
 
 
 @main.command()

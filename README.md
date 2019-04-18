@@ -277,7 +277,7 @@ Options:
 ### Single image
 
 ```
-Usage: demo.py single [OPTIONS]
+Usage: python demo.py single [OPTIONS] 
 
   Inference from a single image
 
@@ -288,6 +288,10 @@ Options:
   --cuda / --cpu              Enable CUDA if available [default: --cuda]
   --crf                       CRF post-processing  [default: False]
   --help                      Show this message and exit.
+  
+  
+ e.g. python demo.py single -c configs/cocostuff164k.yaml -m data/models/coco/deeplabv1_resnet101/caffemodel/deeplabv2_resnet101_msc-cocostuff164k-100000.pth \
+        -i greghr.png --cpu --crf
 ```
 
 ### Webcam
