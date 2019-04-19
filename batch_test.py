@@ -21,7 +21,7 @@ label2semantic = {}
 
 config_path = 'configs/cocostuff164k.yaml'
 model_path = 'data/models/coco/deeplabv1_resnet101/caffemodel/deeplabv2_resnet101_msc-cocostuff164k-100000.pth'
-cuda = True
+cuda = False
 crf = True
 
 def get_device(cuda):
@@ -105,8 +105,9 @@ if __name__ == "__main__":
         print("No images")
         exit()
     
+    f = open(config_path)
     # Setup
-    CONFIG = Dict(yaml.load(config_path))
+    CONFIG = Dict(yaml.load(f))
     device = get_device(cuda)
     torch.set_grad_enabled(False)
 
