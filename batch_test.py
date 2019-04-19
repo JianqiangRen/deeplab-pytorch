@@ -80,6 +80,14 @@ def preprocessing(image, device, CONFIG):
     return image, raw_image
 
 
+def has_intersection(list_a, list_b):
+    for a in list_a:
+        if a in list_b:
+            return True
+    return False
+    
+
+
 def inference(model, image, raw_image=None, postprocessor=None):
     _, _, H, W = image.shape
 
@@ -145,16 +153,23 @@ if __name__ == "__main__":
 
 
         sem_labels = [label2semantic[label] for label in labels]
-        text_str = ''
-        for i, t in  enumerate(sem_labels):
-            text_str += ", " +t
-            if i >0 and i % 4 == 0:
-                text_str += '\n'
+        # text_str = ''
+        # for i, t in  enumerate(sem_labels):
+        #     text_str += ", " +t
+        #     if i >0 and i % 4 == 0:
+        #         text_str += '\n'
+        #
+        # y0, dy = 20, 25
+        #
+        # for i, txt in enumerate(text_str.split('\n')):
+        #     y = y0 + i * dy
+        #     cv2.putText(raw_image, txt, (0, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0, 255), 2)
         
-        y0, dy = 20, 25
-
-        for i, txt in enumerate(text_str.split('\n')):
-            y = y0 + i * dy
-            cv2.putText(raw_image, txt, (0, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0, 255), 2)
+        if has_intersection(sem_labels, ['wood', 'wall-wood', 'bench', 'car', 'bus']):
+            continue
+        
+        if not has_intersection(sem_labels, ['sea', 'sea-other', 'sky', 'sky-other', 'water-ohter', 'cloud', 'tree', 'mountain',\
+                                               'grass' ,'rock']):
+            continue
         
         cv2.imwrite(fn,raw_image )
