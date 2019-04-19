@@ -13,16 +13,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 import yaml
 from addict import Dict
-
+import random
 from libs.models import *
 from libs.utils import DenseCRF
+import datetime
 
 label2semantic = {}
 
 config_path = 'configs/cocostuff164k.yaml'
 model_path = 'data/models/coco/deeplabv1_resnet101/caffemodel/deeplabv2_resnet101_msc-cocostuff164k-100000.pth'
 cuda = False
-crf = True
+crf = False
 
 def get_device(cuda):
     cuda = cuda and torch.cuda.is_available()
@@ -138,3 +139,22 @@ if __name__ == "__main__":
         # cv2.imwrite("labelmap.png", labelmap.astype(np.uint8))
         labels = np.unique(labelmap)
         print([label2semantic[label] for label in labels])
+
+        fn = 'landscape_seg/' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-") + str(
+            random.randint(0, 10000000)) + ".png"
+
+
+        sem_labels = [label2semantic[label] for label in labels]
+        text_str = ''
+        for i, t in  enumerate(sem_labels):
+            text_str += ", " +t
+            if i >0 and i % 4 == 0:
+                text_str += '\n'
+        
+        y0, dy = 20, 25
+
+        for i, txt in enumerate(text_str.split('\n')):
+            y = y0 + i * dy
+            cv2.putText(raw_image, txt, (0, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0, 255), 2)
+        
+        cv2.imwrite(fn,raw_image )
