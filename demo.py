@@ -172,7 +172,7 @@ def single(config_path, model_path, image_path, cuda, crf):
     labels = np.unique(labelmap)
     cv2.imwrite("labelmap.png", labelmap)
  
-    cv2.imshow("Input image", raw_image[:, :, :])
+    #cv2.imshow("Input image", raw_image[:, :, :])
     cv2.waitKey(0)
 
 
@@ -180,9 +180,7 @@ def single(config_path, model_path, image_path, cuda, crf):
         print("{}".format(i))
         mask = labelmap == label
         print("[{}]label:{}".format(i, label2semantic[label]))
-        cur_img = np.dstack((raw_image, 120* mask.astype(np.float32)))
-        cv2.putText(cur_img,label2semantic[label],(30,30),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,255,255),1)
-        cv2.imshow("{}".format(i), mask.astype(np.float32))
+        #cv2.imshow("{}".format(i), mask.astype(np.float32))
         cv2.waitKey(0)
 
 
