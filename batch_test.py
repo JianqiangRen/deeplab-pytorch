@@ -22,7 +22,7 @@ label2semantic = {}
 
 config_path = 'configs/cocostuff164k.yaml'
 model_path = 'data/models/coco/deeplabv1_resnet101/caffemodel/deeplabv2_resnet101_msc-cocostuff164k-100000.pth'
-cuda = False
+cuda = True
 crf = False
 
 def get_device(cuda):
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         #     y = y0 + i * dy
         #     cv2.putText(raw_image, txt, (0, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0, 255), 2)
         
-        if has_intersection(sem_labels, ['wood', 'wall-wood', 'bench', 'car', 'bus']):
+        if has_intersection(sem_labels, ['wood', 'wall-wood', 'bench', 'car', 'bus','building-other','leaves']):
             continue
         
         if not has_intersection(sem_labels, ['sea', 'sea-other', 'sky', 'sky-other', 'water-ohter', 'cloud', 'tree', 'mountain',\
