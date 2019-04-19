@@ -7,10 +7,6 @@ import glob
 import os
 import click
 import cv2
-import matplotlib
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-import pylab
 import numpy as np
 import torch
 import torch.nn as nn
