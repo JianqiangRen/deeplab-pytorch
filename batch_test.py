@@ -22,7 +22,7 @@ label2semantic = {}
 
 config_path = 'configs/cocostuff164k.yaml'
 model_path = 'data/models/coco/deeplabv1_resnet101/caffemodel/deeplabv2_resnet101_msc-cocostuff164k-100000.pth'
-cuda = True
+cuda = False
 crf = False
 
 def get_device(cuda):
@@ -145,11 +145,13 @@ if __name__ == "__main__":
         labelmap = inference(model, image, raw_image, postprocessor)
         # print(type(labelmap), labelmap.dtype)
         # cv2.imwrite("labelmap.png", labelmap.astype(np.uint8))
+        
+        
+        labelmap[labelmap == 147] = 177  # river -> water
+        
         labels = np.unique(labelmap)
         print([label2semantic[label] for label in labels])
 
-        fn = 'landscape_seg/' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-") + str(
-            random.randint(0, 10000000)) + ".png"
 
 
         sem_labels = [label2semantic[label] for label in labels]
@@ -171,5 +173,9 @@ if __name__ == "__main__":
         if not has_intersection(sem_labels, ['sea', 'sea-other', 'sky', 'sky-other', 'water-ohter', 'cloud', 'tree', 'mountain',\
                                                'grass' ,'rock']):
             continue
-        
-        cv2.imwrite(fn,raw_image )
+            
+        fn = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-") + str(
+            random.randint(0, 10000000)) + ".png"
+        cv2.imwrite('landscape_train_img/' + fn,raw_image)
+        cv2.imwrite('landscape_train_inst/' + fn, labelmap)
+        cv2.imwrite('landscape_train_label/' + fn, labelmap)
